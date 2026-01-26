@@ -5,26 +5,27 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Build",
+            "name": "Build and run SecurityParsing tests",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/ABD.sln",
+            "preLaunchTask": "test",
+            "program": "${workspaceFolder}/Tests/CITests/bin/Debug/net9/SecurityParsingTests.sln",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole",
         },
         {
-            "name": "Run tests",
+            "name": "Build and run DbManagerConsole",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "test",
-            "program": "${workspaceFolder}/ABD.sln",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/Apps/DbManagerConsole/bin/Debug/net9/DbManagerConsole.exe",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole",
-        }
+        },
+        
     ]
 }

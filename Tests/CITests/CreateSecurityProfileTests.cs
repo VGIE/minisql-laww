@@ -39,6 +39,9 @@ namespace SecurityParsingTests
 
             query = MiniSQLParser.Parse("create security profile OtherProfile") as CreateSecurityProfile;
             Assert.Null(query);
+
+            query = MiniSQLParser.Parse("CREATE SECURITY PROFILE profile") as CreateSecurityProfile;
+            Assert.NotNull(query);
         }
 
         [Fact]
@@ -49,6 +52,9 @@ namespace SecurityParsingTests
 
             query = MiniSQLParser.Parse("CREATE SECURITY PROFILE Pro file") as CreateSecurityProfile;
             Assert.Null(query);
+
+            query = MiniSQLParser.Parse("CREATE SECURITY PROFILE profile") as CreateSecurityProfile;
+            Assert.NotNull(query);
         }
 
         [Fact]
@@ -59,6 +65,9 @@ namespace SecurityParsingTests
 
             query = MiniSQLParser.Parse("CREATE SECURITY PROFILE") as CreateSecurityProfile;
             Assert.Null(query);
+
+            query = MiniSQLParser.Parse("CREATE SECURITY PROFILE profile") as CreateSecurityProfile;
+            Assert.NotNull(query);
         }
     }
 }

@@ -39,6 +39,9 @@ namespace SecurityParsingTests
 
             query = MiniSQLParser.Parse("delete user User") as DeleteUser;
             Assert.Null(query);
+
+            query = MiniSQLParser.Parse("DELETE USER User") as DeleteUser;
+            Assert.NotNull(query);
         }
 
         [Fact]
@@ -49,6 +52,9 @@ namespace SecurityParsingTests
 
             query = MiniSQLParser.Parse("DELETE USER User 1") as DeleteUser;
             Assert.Null(query);
+
+            query = MiniSQLParser.Parse("DELETE USER User") as DeleteUser;
+            Assert.NotNull(query);
         }
 
         [Fact]
@@ -59,6 +65,9 @@ namespace SecurityParsingTests
 
             query = MiniSQLParser.Parse("DELETE USER ") as DeleteUser;
             Assert.Null(query);
+
+            query = MiniSQLParser.Parse("DELETE USER User") as DeleteUser;
+            Assert.NotNull(query);
         }
     }
 }

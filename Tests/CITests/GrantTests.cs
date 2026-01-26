@@ -73,6 +73,9 @@ namespace SecurityParsingTests
 
             query = MiniSQLParser.Parse("GRANT UPDATE ON Table To User") as Grant;
             Assert.Null(query);
+
+            query = MiniSQLParser.Parse("GRANT DELETE ON Table TO User") as Grant;
+            Assert.NotNull(query);
         }
 
         [Fact]
@@ -89,6 +92,9 @@ namespace SecurityParsingTests
 
             query = MiniSQLParser.Parse("GRANT UPDATE ON Table To User_2") as Grant;
             Assert.Null(query);
+
+            query = MiniSQLParser.Parse("GRANT DELETE ON Table TO User") as Grant;
+            Assert.NotNull(query);
         }
 
         [Fact]
@@ -105,6 +111,9 @@ namespace SecurityParsingTests
 
             query = MiniSQLParser.Parse("GRANT SET ON Table TO User") as Grant;
             Assert.Null(query);
+
+            query = MiniSQLParser.Parse("GRANT DELETE ON Table TO User") as Grant;
+            Assert.NotNull(query);
         }
 
         [Fact]
@@ -121,6 +130,9 @@ namespace SecurityParsingTests
 
             query = MiniSQLParser.Parse("GRANT SELECT ON Table TO") as Grant;
             Assert.Null(query);
+
+            query = MiniSQLParser.Parse("GRANT DELETE ON Table TO User") as Grant;
+            Assert.NotNull(query);
         }
     }
 }

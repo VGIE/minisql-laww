@@ -34,11 +34,14 @@ namespace SecurityParsingTests
         [Fact]
         public void IncorrectCapitalization()
         {
-            DropSecurityProfile query = MiniSQLParser.Parse("Create SECURITY PROFILE profile") as DropSecurityProfile;
+            DropSecurityProfile query = MiniSQLParser.Parse("Drop SECURITY PROFILE profile") as DropSecurityProfile;
             Assert.Null(query);
 
-            query = MiniSQLParser.Parse("create security profile OtherProfile") as DropSecurityProfile;
+            query = MiniSQLParser.Parse("drop security profile OtherProfile") as DropSecurityProfile;
             Assert.Null(query);
+
+            query = MiniSQLParser.Parse("DROP SECURITY PROFILE profile") as DropSecurityProfile;
+            Assert.NotNull(query);
         }
 
         [Fact]
@@ -49,6 +52,9 @@ namespace SecurityParsingTests
 
             query = MiniSQLParser.Parse("DROP SECURITY PROFILE Pro file") as DropSecurityProfile;
             Assert.Null(query);
+
+            query = MiniSQLParser.Parse("DROP SECURITY PROFILE profile") as DropSecurityProfile;
+            Assert.NotNull(query);
         }
 
         [Fact]
@@ -59,6 +65,9 @@ namespace SecurityParsingTests
 
             query = MiniSQLParser.Parse("DROP SECURITY PROFILE") as DropSecurityProfile;
             Assert.Null(query);
+
+            query = MiniSQLParser.Parse("DROP SECURITY PROFILE profile") as DropSecurityProfile;
+            Assert.NotNull(query);
         }
     }
 }
