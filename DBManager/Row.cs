@@ -16,22 +16,30 @@ namespace DbManager
         public Row(List<ColumnDefinition> columnDefinitions, List<string> values)
         {
             //TODO DEADLINE 1.A: Initialize member variables
-
+            ColumnDefinitions = columnDefinitions;
+            Values = values;
             
         }
 
         public void SetValue(string columnName, string value)
         {
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
-
             
+
         }
 
         public string GetValue(string columnName)
         {
             //TODO DEADLINE 1.A: Given a column name, return the value in that column
+            int i = 0;
+            foreach (var item in ColumnDefinitions)
+            {
+                if (item.Name == columnName) {
+                    
+                }
+                i = i++;
+            }
 
-            
             return null;
             
         }
