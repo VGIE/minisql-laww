@@ -24,7 +24,15 @@ namespace DbManager
         public void SetValue(string columnName, string value)
         {
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
-            
+            int i = 0;
+            foreach (var item in ColumnDefinitions)
+            {
+                if (item.Name == columnName)
+                {
+                     Values[i]=value;
+                }
+                i = i++;
+            }
 
         }
 
@@ -35,7 +43,7 @@ namespace DbManager
             foreach (var item in ColumnDefinitions)
             {
                 if (item.Name == columnName) {
-                    
+                    return Values[i];
                 }
                 i = i++;
             }
@@ -48,9 +56,7 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Given a condition (column name, operator and literal value, return whether it is true or not
             //for this row. Check Condition.IsTrue method
-
-            
-            return false;
+            return condition.IsTrue();
             
         }
 
@@ -60,25 +66,38 @@ namespace DbManager
         private static string Encode(string value)
         {
             //TODO DEADLINE 1.C: Encode the delimiter in value
+            if (value == null) {
+                return null;
+            }
 
-            
-            return null;
+            return value.Replace(Delimiter,DelimiterEncoded);
             
         }
 
         private static string Decode(string value)
         {
             //TODO DEADLINE 1.C: Decode the value doing the opposite of Encode()
-            
-            return null;
-            
+
+            if (value == null)
+            {
+                return null;
+            }
+
+            return value.Replace(DelimiterEncoded, Delimiter);
+
         }
 
         public string AsText()
         {
             //TODO DEADLINE 1.C: Return the row as string with all values separated by the delimiter
-            
-            return null;
+            String row="";
+            int i = 0;
+            foreach (var item in Values)
+            {
+                row = row + Values[i] +Delimiter;
+                i = i++;
+            }
+            return row;
             
         }
 
