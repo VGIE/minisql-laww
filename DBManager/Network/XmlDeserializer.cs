@@ -18,8 +18,25 @@ namespace DbManager.Network
             database = null;
             username = null;
             password = null;
-            
-            return false;
+
+            if (string.IsNullOrEmpty(command))
+                return false;
+
+            if (!command.StartsWith("<Open") || !command.EndsWith("/>"))
+                return false;
+
+
+            const string openPattern = @"^<Open\sDatabase=""([^""]+)""\sUser=""([^""]+)""\sPassword=""([^""]+)""/>$";
+            Match match = Regex.Match(command, openPattern);
+
+            if (!match.Success)
+                return false;
+
+            database = match.Groups[1].Value;
+            username = match.Groups[2].Value;
+            password = match.Groups[3].Value;
+
+            return true;
         }
 
         public static bool ParseOpenCreateAnswer(string answer, out string error)
