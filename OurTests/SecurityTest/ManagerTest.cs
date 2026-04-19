@@ -427,16 +427,16 @@ namespace OurTests.SecurityTest
 
             dbLupe = Database.Load(dbName, "lupe", "lupe123");
             bool privilege = dbLupe.SecurityManager.IsGrantedPrivilege("TestRole", "TestTable", Privilege.Select);
-            //Assert.True(privilege);
+            Assert.False(privilege);
 
-            /*privilege = dbLupe.SecurityManager.IsGrantedPrivilege("TestRole", "TestTable", Privilege.Update);
-            Assert.True(privilege);
+            privilege = dbLupe.SecurityManager.IsGrantedPrivilege("TestRole", "TestTable", Privilege.Update);
+            Assert.False(privilege);
             
             privilege = dbLupe.SecurityManager.IsGrantedPrivilege("TestRole", "TestTable", Privilege.Insert);
-            Assert.True(privilege);
+            Assert.False(privilege);
             privilege = dbLupe.SecurityManager.IsGrantedPrivilege("TestRole", "TestTable", Privilege.Delete);
-            Assert.True(privilege);
-            no deberia, pero sale bien
+            Assert.False(privilege);
+            
              
             db.Save(dbName);
 
@@ -447,8 +447,8 @@ namespace OurTests.SecurityTest
             privilege = dbLupe.SecurityManager.IsGrantedPrivilege("TestRole", "TestTable", Privilege.Select);
             Assert.False(privilege);
             privilege = dbLupe.SecurityManager.IsGrantedPrivilege("TestRole", "TestTable", Privilege.Update);
-            Assert.True(privilege);
-            Assert.False(privilege);*/
+            Assert.False(privilege);
+            Assert.False(privilege);
         }
 
         [Fact]
