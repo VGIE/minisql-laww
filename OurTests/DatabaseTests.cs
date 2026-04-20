@@ -270,23 +270,23 @@ namespace OurTests
 
             bool saveResult = db.Save(fileName);
 
-            Database loadedDB = Database.Load(fileName, Database.AdminUsername, Database.AdminPassword);
+            Database loadedDBP = Database.Load(fileName, Database.AdminUsername, Database.AdminPassword);
             Assert.True(saveResult, "Should return true");
-            Assert.NotNull(loadedDB);
+            Assert.NotNull(loadedDBP);
 
-            Table loadedTable = loadedDB.TableByName("People");
-            Assert.NotNull(loadedTable);
+            Table loadedTableR = loadedDBP.TableByName("People");
+            Assert.NotNull(loadedTableR);
 
-            Assert.Equal(2, loadedTable.NumColumns());
-            Assert.Equal(3, loadedTable.NumRows());
+            Assert.Equal(2, loadedTableR.NumColumns());
+            Assert.Equal(3, loadedTableR.NumRows());
 
-            Assert.Equal("Lucia", loadedTable.GetRow(0).GetValue("Name"));
-            Assert.Equal("Wiame", loadedTable.GetRow(1).GetValue("Name"));
-            Assert.Equal("Araitz", loadedTable.GetRow(2).GetValue("Name"));
+            Assert.Equal("Lucia", loadedTableR.GetRow(0).GetValue("Name"));
+            Assert.Equal("Wiame", loadedTableR.GetRow(1).GetValue("Name"));
+            Assert.Equal("Araitz", loadedTableR.GetRow(2).GetValue("Name"));
 
-            Assert.Equal("20", loadedTable.GetRow(0).GetValue("Age"));
-            Assert.Equal("23", loadedTable.GetRow(1).GetValue("Age"));
-            Assert.Equal("20", loadedTable.GetRow(2).GetValue("Age"));
+            Assert.Equal("20", loadedTableR.GetRow(0).GetValue("Age"));
+            Assert.Equal("23", loadedTableR.GetRow(1).GetValue("Age"));
+            Assert.Equal("20", loadedTableR.GetRow(2).GetValue("Age"));
 
             File.Delete(fileName);
         }
