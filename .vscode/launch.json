@@ -12,7 +12,7 @@
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
-            "console": "internalConsole",
+            "console": "externalTerminal",
             "preLaunchTask": "buildClient"
         },
 
@@ -24,8 +24,9 @@
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
-            "console": "internalConsole",
-            "preLaunchTask": "buildServer"
+            "console": "externalTerminal",
+            "preLaunchTask": "buildServer", 
+            
         },
     ],
     "compounds": [

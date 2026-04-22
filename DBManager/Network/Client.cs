@@ -46,9 +46,23 @@ namespace DbManager.Network
             //Here, we do not do any Xml formatting, we just send the string as it comes and return the string as it comes
             //This private method should be used from Open/SendQuery/Close
             //Have a look at the project ClientConsole to see how we can use the TcpClient class
- 
-            return null;
-            
+
+            string messageToSend= message + "\n";
+                try
+                {
+                    NetworkStream stream = m_tcpClient.GetStream();
+                    byte[] dataToSend = Encoding.UTF8.GetBytes(messageToSend);
+                    stream.Write(dataToSend, 0, dataToSend.Length);
+    
+                    byte[] buffer = new byte[1024];
+                    int bytesRead = stream.Read(buffer, 0, buffer.Length);
+                    string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                    return response;
+                }
+                catch
+                {
+                    return null;
+                }            
         }
 
         public bool Open(string database, string username, string password, out string error)

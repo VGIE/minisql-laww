@@ -7,13 +7,16 @@
             "label" : "buildClient",
             "command" : "dotnet",
             "args":
-            ["build","Samples/ClientConsole/ClientConsole.csproj","-c","Debug","-f","net9"]
+            ["build","Samples/ClientConsole/ClientConsole.csproj","-c","Debug","-f","net9"] 
+            
         },
         {
             "label" : "buildServer",
             "command" : "dotnet",
             "args":
             ["build","Samples/ServerConsole/ServerConsole.csproj","-c","Debug","-f","net9"]
+
+
         }
     ]
 }
