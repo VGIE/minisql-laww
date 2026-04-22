@@ -47,15 +47,19 @@ namespace DbManager.Network
             //This private method should be used from Open/SendQuery/Close
             //Have a look at the project ClientConsole to see how we can use the TcpClient class
 
-            string messageToSend= message + "\n";
+            string messageToSend= message;
                 try
                 {
                     NetworkStream stream = m_tcpClient.GetStream();
+                    //Pasamos el mensaje string a bytes para mandar (con UTF8 se transforma)
                     byte[] dataToSend = Encoding.UTF8.GetBytes(messageToSend);
+                    //Mandamos al servidor el mensaje en bytes donde 0 es offset
                     stream.Write(dataToSend, 0, dataToSend.Length);
     
-                    byte[] buffer = new byte[1024];
+                    //EL buffer lee la respuesta del servido. EL tamaño es 4096 pero se pyede cambiar dependiendo de la respuesta esperada 
+                    byte[] buffer = new byte[4096];
                     int bytesRead = stream.Read(buffer, 0, buffer.Length);
+                    //De vuelta a string la respuesta dle servidor
                     string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
                     return response;
                 }
@@ -90,7 +94,16 @@ namespace DbManager.Network
             //DEADLINE 6: Send a Create command to the server using SendString
             
             error = null;
-            return false;
+            string request= $"<Create Database=\"{database}\" User=\"{username}\" Password=\"{password}\"/>";
+            string response = SendString(request);
+            if(response==null)
+            {
+                error="An error message from Constants.cs";
+                return false;
+            }
+            bool success= XmlDeserializer.ParseOpenCreateAnswer(response, out error);
+
+            return success;
             
         }
 
