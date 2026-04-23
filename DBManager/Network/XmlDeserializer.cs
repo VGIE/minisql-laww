@@ -14,7 +14,7 @@ namespace DbManager.Network
         {
             //TODO DEADLINE 6: Try to parse the xml command using the specified xml format (eGela)
             //Return true if 'command' is an Open statement, false otherwise. If true, set the value of database, username and password
-            
+
             database = null;
             username = null;
             password = null;
@@ -44,7 +44,7 @@ namespace DbManager.Network
             //TODO DEADLINE 6: Try to parse the answer to an Open/Create command.
             //Return true if 'command' is equal to XmlSerializer.OpenCreateSuccess
             //If it is an error (<Error>...</Error>), return false and set 'error' with the error message
-            
+
             error = null;
             return false;
         }
@@ -53,20 +53,40 @@ namespace DbManager.Network
         {
             //TODO DEADLINE 6: Try to parse a Create xml command using the specified xml format (eGela)
             //Return true if 'command' is a Create statement, false otherwise. If true, set the value of database, username and password
-            
+
             database = null;
             username = null;
             password = null;
-            return false;
+
+            if (string.IsNullOrEmpty(command))
+                return false;
+
+            if (!command.StartsWith("<Create") || !command.EndsWith("/>"))
+                return false;
+
+
+            const string createPattern = @"^<Create\sDatabase=""([^""]+)""\sUser=""([^""]+)""\sPassword=""([^""]+)""/>$";
+            Match match = Regex.Match(command, createPattern);
+
+            if (!match.Success)
+                return false;
+
+
+            database = match.Groups[1].Value;
+            username = match.Groups[2].Value;
+            password = match.Groups[3].Value;
+
+            return true;
+
         }
 
-        
+
 
         public static bool ParseQuery(string answer, out string query)
         {
             //TODO DEADLINE 6: Try to parse a Query xml command using the specified xml format (eGela)
             //Return true if 'command' is a Query statement, false otherwise. If true, set the value of query with the content of the command
-            
+
             query = null;
             return false;
         }
@@ -76,7 +96,7 @@ namespace DbManager.Network
             //TODO DEADLINE 6: Try to parse the answer to a Query command.
             //Return true if 'command' does not contain an error inside (<Error>...</Error>)
             //If it is an error (<Error>...</Error>), return false and set 'answerContent' with the error message
-            
+
             answerContent = null;
             return false;
         }
