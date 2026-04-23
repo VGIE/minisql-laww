@@ -110,7 +110,19 @@ namespace DbManager.Network
         public string SendQuery(string query)
         {
             //DEADLINE 6: Send a Query command to the server using SendString
-            
+            string queryRequest=$"<Query>{query}</Query>";
+            string response = SendString(queryRequest);
+            if (response==null)
+            {
+                return "An error message from Constants.cs";
+            }
+            bool success= XmlDeserializer.ParseOpenCreateAnswer(response, out queryRequest);
+
+            if(success)
+            {
+                return queryRequest;
+            }
+
             return null;
             
         }
@@ -118,6 +130,8 @@ namespace DbManager.Network
         public void Close()
         {
             //DEADLINE 6: Send a Close command to the server using SendString and close the connection to the server
+            SendString(XmlSerializer.CloseConnection);
+            m_tcpClient.Close(); 
             
         }
     }
