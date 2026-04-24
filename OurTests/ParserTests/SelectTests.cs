@@ -164,18 +164,18 @@ namespace OurTests
             Assert.NotEqual(Constants.SyntaxError, db.LastErrorMessage);
 
             db.ExecuteMiniSQLQuery("SELECT dni FROM Tabla WHERE edad=20");
-            Assert.NotEqual(Constants.SyntaxError, db.LastErrorMessage);
+            Assert.Equal(Constants.SyntaxError, db.LastErrorMessage);
 
             db.ExecuteMiniSQLQuery("SELECT dni FROM Tabla WHERE edad=-20");
-            Assert.NotEqual(Constants.SyntaxError, db.LastErrorMessage);
+            Assert.Equal(Constants.SyntaxError, db.LastErrorMessage);
 
             db.ExecuteMiniSQLQuery("SELECT dni FROM Tabla WHERE nombre='Juan'");
             Assert.NotEqual(Constants.SyntaxError, db.LastErrorMessage);
 
             db.ExecuteMiniSQLQuery("SELECT dni FROM Tabla WHERE edad>18");
-            Assert.NotEqual(Constants.SyntaxError, db.LastErrorMessage);
+            Assert.Equal(Constants.SyntaxError, db.LastErrorMessage);
 
-            db.ExecuteMiniSQLQuery("SELECT dni FROM Tabla WHERE edad<6.5");
+            db.ExecuteMiniSQLQuery("SELECT dni FROM Tabla WHERE edad<'6.5'");
             Assert.NotEqual(Constants.SyntaxError, db.LastErrorMessage);
 
             db.ExecuteMiniSQLQuery("SELECT dni FROM Tabla WHERE nombre='Juan Perez'");
@@ -187,6 +187,20 @@ namespace OurTests
             db.ExecuteMiniSQLQuery("SELECT    dni    FROM    Tabla");
             Assert.NotEqual(Constants.SyntaxError, db.LastErrorMessage);
         }
+        [Fact]
+        public void TestCommasInWhereCondition()
+        {
+
+           string query1= "SELECT Nombre FROM Personas WHERE Name=Lupe";
+           Select result1 = MiniSQLParser.Parse(query1) as Select;
+
+            string query= "SELECT Nombre FROM Personas WHERE Name=2";
+            Select result = MiniSQLParser.Parse(query) as Select;
+            Assert.Null(result1);
+            Assert.Null(result);
+            
+        }
+
     }
     
 }

@@ -15,7 +15,7 @@ namespace DbManager
             const string selectPattern = @"^SELECT\s+(\*|[a-zA-Z0-9]+(?:,[a-zA-Z0-9]+)*)\s+FROM\s+([a-zA-Z0-9]+)$";
 
             //SELECT WHERE
-            const string selectWherePattern = @"^SELECT\s+(\*|[a-zA-Z0-9]+(?:,[a-zA-Z0-9]+)*)\s+FROM\s+([a-zA-Z0-9]+)\s+WHERE\s+([a-zA-Z0-9]+)(=|<|>)('[-]?\d+(\.\d+)?'|'[^']+'|[-]?\d+(\.\d+)?)$";
+            const string selectWherePattern = @"^SELECT\s+(\*|[a-zA-Z0-9]+(?:,[a-zA-Z0-9]+)*)\s+FROM\s+([a-zA-Z0-9]+)\s+WHERE\s+([a-zA-Z0-9]+)(=|<|>)('[-]?\d+(\.\d+)?'|'[^']+'|'[-]?\d+(\.\d+)?)$";
 
             //INSERT INTO tabla VALUES columnas patrón
             const string insertPattern = @"^INSERT\s+INTO\s+(\w+)\s+VALUES\s*\((('[-]?\d+(\.\d+)?'|'[^']+')(?:,('[-]?\d+(\.\d+)?'|'[^']+'))*)\)$";
