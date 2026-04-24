@@ -46,6 +46,20 @@ namespace DbManager.Network
             //If it is an error (<Error>...</Error>), return false and set 'error' with the error message
 
             error = null;
+
+            if (string.IsNullOrEmpty(answer))
+                return false;
+
+            if (answer == XmlSerializer.OpenCreateSuccess)
+                return true;
+
+            const string errorPattern = @"^<Error>([^<]+)</Error>$";
+            Match match = Regex.Match(answer, errorPattern);
+
+            if (!match.Success)
+                return false;
+
+            error = match.Groups[1].Value;
             return false;
         }
 
