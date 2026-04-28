@@ -102,7 +102,22 @@ namespace DbManager.Network
             //Return true if 'command' is a Query statement, false otherwise. If true, set the value of query with the content of the command
 
             query = null;
-            return false;
+
+            if (string.IsNullOrEmpty(answer))
+                return false;
+
+            if (!answer.StartsWith("<Query>") || !answer.EndsWith("</Query>"))
+                return false;
+
+            const string queryPattern = @"^<Query>(.+)</Query>$";
+            Match match = Regex.Match(answer, queryPattern);
+
+            if (!match.Success)
+                return false;
+
+            query = match.Groups[1].Value;
+
+            return true;
         }
 
         public static bool ParseQueryAnswer(string answer, out string answerContent)
