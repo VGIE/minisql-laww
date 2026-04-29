@@ -127,7 +127,30 @@ namespace DbManager.Network
             //If it is an error (<Error>...</Error>), return false and set 'answerContent' with the error message
 
             answerContent = null;
-            return false;
+
+            if (string.IsNullOrEmpty(answer))
+                return false;
+
+            if (!answer.StartsWith("<Answer>") || !answer.EndsWith("</Answer>"))
+                return false;
+
+            const string errorPattern = @"^<Answer><Error>(.+)</Error></Answer>$";
+            Match errorMatch = Regex.Match(answer, errorPattern);
+
+            if (errorMatch.Success)
+            {
+                answerContent = errorMatch.Groups[1].Value;
+                return false;
+            }
+            
+            const string successPattern = @"^<Answer>(.+)</Answer>$";
+            Match successMatch = Regex.Match(answer, successPattern);
+
+            if (!successMatch.Success)
+                return false;
+
+            answerContent = successMatch.Groups[1].Value;
+            return true;
         }
 
         public static bool IsCloseCommand(string command)
