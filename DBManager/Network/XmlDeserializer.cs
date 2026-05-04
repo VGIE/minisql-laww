@@ -94,8 +94,6 @@ namespace DbManager.Network
 
         }
 
-
-
         public static bool ParseQuery(string answer, out string query)
         {
             //TODO DEADLINE 6: Try to parse a Query xml command using the specified xml format (eGela)

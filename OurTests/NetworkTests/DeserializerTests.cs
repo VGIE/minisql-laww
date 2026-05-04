@@ -162,5 +162,51 @@ namespace OurTests.NetworkTests
 
             Assert.False(result7);
         }
+
+        [Fact]
+        public void ParseOpenCreateAnswerSuccess()
+        {
+            string error;
+
+            bool result = XmlDeserializer.ParseOpenCreateAnswer("<Success/>", out error);
+
+            Assert.True(result);
+            Assert.Null(error);
+        }
+
+        [Fact]
+        public void ParseOpenCreateAnswerError()
+        {
+            string error;
+            string answer = "<Error>" + DbManager.Constants.TableDoesNotExistError + "</Error>";
+
+            bool result = XmlDeserializer.ParseOpenCreateAnswer( answer, out error);
+
+            Assert.False(result);
+            Assert.Equal(DbManager.Constants.TableDoesNotExistError, error);
+        }
+
+        [Fact]
+        public void ParseOpenCreateAnswerNull()
+        {
+            string error;
+
+            bool result = XmlDeserializer.ParseOpenCreateAnswer(null, out error);
+
+            Assert.False(result);
+            Assert.Null(error);
+        }
+
+        [Fact]
+        public void ParseOpenCreateAnswerEmpty()
+        {
+            string error;
+
+            bool result = XmlDeserializer.ParseOpenCreateAnswer("", out error);
+
+            Assert.False(result);
+            Assert.Null(error);
+        }
+
     }
 }
