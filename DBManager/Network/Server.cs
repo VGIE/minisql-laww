@@ -33,22 +33,23 @@ namespace DbManager.Network
 
                 server.Start();
 
-                Console.WriteLine("Server running and listening on port 1200");
+                //Console.WriteLine("Server running and listening on port 1200");
 
                 Socket socket = server.AcceptSocket();
 
-                Console.WriteLine("Connection accepted from " + socket.RemoteEndPoint);
+                //Console.WriteLine("Connection accepted from " + socket.RemoteEndPoint);
 
                 bool trueFalse = true;
                 while (trueFalse == true)
                 {
                     byte[] buffer = new byte[100];
                     int bytesRead = socket.Receive(buffer);
+                    string exit = "Exit";
                     buffer[bytesRead] = 0;
                     ASCIIEncoding encoding = new ASCIIEncoding();
                     string clientMessage = encoding.GetString(buffer).Substring(0, bytesRead);
-                    Console.WriteLine("Message received from client: " + clientMessage);
-                    if (clientMessage == "Exit")
+                    //Console.WriteLine("Message received from client: " + clientMessage);
+                    if (clientMessage == exit)
                     {
                         trueFalse = false;
                     }
@@ -67,7 +68,7 @@ namespace DbManager.Network
             }
             catch (Exception e)
             {
-            Console.WriteLine("Unhandled error: " + e);
+            //Console.WriteLine("Unhandled error: " + e);
 ;
             }
             
