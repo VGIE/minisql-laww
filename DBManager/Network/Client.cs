@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,11 +25,11 @@ namespace DbManager.Network
 
             try
             {
-                if (m_tcpClient.Connected)
+                if (m_tcpClient!=null)
                 {
-                    m_tcpClient.Close();
-                    TcpClient newClient = new TcpClient();
+                    m_tcpClient.Close(); 
                 }
+                TcpClient newClient = new TcpClient();
                 m_tcpClient.Connect(ipAddress, port);
                 return true;
                 
@@ -59,6 +60,11 @@ namespace DbManager.Network
                     //EL buffer lee la respuesta del servido. EL tamaño es 4096 pero se pyede cambiar dependiendo de la respuesta esperada 
                     byte[] buffer = new byte[4096];
                     int bytesRead = stream.Read(buffer, 0, buffer.Length);
+
+                    if(bytesRead==0)
+                    {
+                        return null;
+                    }   
                     //De vuelta a string la respuesta dle servidor
                     string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
                     return response;
@@ -74,7 +80,7 @@ namespace DbManager.Network
             //DEADLINE 6: Send an Open command to the server using SendString
 
             error = null;
-            string request= $"<Open Database=\"{database}\" User=\"{username}\" Password=\"{password}\"/>";
+            string request= XmlSerializer.OpenDatabase(database, username, password);
             string response = SendString(request);
 
             if (response==null)
@@ -94,7 +100,7 @@ namespace DbManager.Network
             //DEADLINE 6: Send a Create command to the server using SendString
             
             error = null;
-            string request= $"<Create Database=\"{database}\" User=\"{username}\" Password=\"{password}\"/>";
+            string request= XmlSerializer.CreateDatabase(database, username, password);
             string response = SendString(request);
             if(response==null)
             {
@@ -109,21 +115,23 @@ namespace DbManager.Network
 
         public string SendQuery(string query)
         {
+         
             //DEADLINE 6: Send a Query command to the server using SendString
-            string queryRequest=$"<Query>{query}</Query>";
+            string queryRequest=XmlSerializer.Query(query);
             string response = SendString(queryRequest);
             if (response==null)
             {
                 return "An error message from Constants.cs";
             }
-            bool success= XmlDeserializer.ParseOpenCreateAnswer(response, out queryRequest);
 
-            if(success)
-            {
-                return queryRequest;
-            }
-
-            return null;
+            if(XmlDeserializer.ParseQueryAnswer(response, out string answerContent))
+             {
+                return answerContent;
+             }
+             else
+              {
+                return answerContent;
+              }
             
         }
 

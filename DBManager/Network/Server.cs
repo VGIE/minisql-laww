@@ -67,8 +67,10 @@ namespace DbManager.Network
             }
             catch (Exception e)
             {
-                Console.WriteLine("Unhandled error: " + e);
+            Console.WriteLine("Unhandled error: " + e);
+;
             }
+            
 
         }  
     }

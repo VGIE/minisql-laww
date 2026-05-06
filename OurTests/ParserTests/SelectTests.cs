@@ -196,8 +196,18 @@ namespace OurTests
 
             string query= "SELECT Nombre FROM Personas WHERE Name=2";
             Select result = MiniSQLParser.Parse(query) as Select;
+
+            string query2= "SELECT Nombre FROM Personas WHERE Name='Lupe'";
+            Select result2 = MiniSQLParser.Parse(query2) as Select;
+
+            string query3= "SELECT Nombre FROM Personas WHERE Name='2'";
+            Select result3 = MiniSQLParser.Parse(query3) as Select;
+
+
             Assert.Null(result1);
             Assert.Null(result);
+            Assert.NotNull(result2);
+            Assert.NotNull(result3);
             
         }
 
