@@ -84,11 +84,6 @@ namespace DbManager.Network
             string request= XmlSerializer.OpenDatabase(database, username, password);
             string response = SendString(request);
 
-            if (database==null || username==null || password==null)
-            {
-              return false;
-            }
-
             bool Error= XmlDeserializer.ParseOpenCreateAnswer(response, out error);
            
             return Error;
@@ -123,7 +118,7 @@ namespace DbManager.Network
              }
              else 
               {
-                return null;
+                return "ERROR: " + answerContent;
               }
            
         }
