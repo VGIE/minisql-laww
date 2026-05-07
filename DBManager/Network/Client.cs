@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -83,15 +84,14 @@ namespace DbManager.Network
             string request= XmlSerializer.OpenDatabase(database, username, password);
             string response = SendString(request);
 
-            if (response==null)
+            if (database==null || username==null || password==null)
             {
-                error="An error message from Constants.cs";
-                return false;
+              return false;
             }
 
-            bool success= XmlDeserializer.ParseOpenCreateAnswer(response, out error);
+            bool Error= XmlDeserializer.ParseOpenCreateAnswer(response, out error);
            
-            return success;
+            return Error;
             
         }
 
@@ -102,14 +102,10 @@ namespace DbManager.Network
             error = null;
             string request= XmlSerializer.CreateDatabase(database, username, password);
             string response = SendString(request);
-            if(response==null)
-            {
-                error="An error message from Constants.cs";
-                return false;
-            }
-            bool success= XmlDeserializer.ParseOpenCreateAnswer(response, out error);
+           
+            bool Error= XmlDeserializer.ParseOpenCreateAnswer(response, out error);
 
-            return success;
+            return Error;
             
         }
 
@@ -119,20 +115,17 @@ namespace DbManager.Network
             //DEADLINE 6: Send a Query command to the server using SendString
             string queryRequest=XmlSerializer.Query(query);
             string response = SendString(queryRequest);
-            if (response==null)
-            {
-                return "An error message from Constants.cs";
-            }
+            
 
             if(XmlDeserializer.ParseQueryAnswer(response, out string answerContent))
              {
                 return answerContent;
              }
-             else
+             else 
               {
-                return answerContent;
+                return null;
               }
-            
+           
         }
 
         public void Close()
