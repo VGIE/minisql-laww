@@ -208,5 +208,42 @@ namespace OurTests.NetworkTests
             Assert.Null(error);
         }
 
+        [Fact]
+        public void ParseOpenCreateAnswerInvalidInputs()
+        {
+            string error;
+
+            // etiqueta incorrecta
+            string answer1 = "<Success></Success>";
+            bool result1 = XmlDeserializer.ParseOpenCreateAnswer(answer1, out error);
+
+            Assert.False(result1);
+
+            // error sin cerrar
+            string answer2 = "<Error>Error";
+            bool result2 = XmlDeserializer.ParseOpenCreateAnswer(answer2, out error);
+
+            Assert.False(result2);
+
+            // success con espacio
+            string answer3 = "<Success />";
+            bool result3 = XmlDeserializer.ParseOpenCreateAnswer(answer3, out error);
+
+            Assert.False(result3);
+
+            // etiqueta desconocida
+            string answer4 = "<Ok/>";
+            bool result4 = XmlDeserializer.ParseOpenCreateAnswer(answer4, out error);
+
+            Assert.False(result4);
+
+            // error vacío
+            string answer5 = "<Error></Error>";
+            bool result5 = XmlDeserializer.ParseOpenCreateAnswer(answer5, out error);
+
+            Assert.False(result5);
+        }
+
+
     }
 }
