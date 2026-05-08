@@ -12,7 +12,7 @@ using System.Xml;
 namespace DbManager.Network
 {
     public class Server
-    {
+    {      
         public void Listen(int port)
         {
             //DEADLINE 6: Implement the server as specified (eGela)
@@ -39,26 +39,91 @@ namespace DbManager.Network
 
                 //Console.WriteLine("Connection accepted from " + socket.RemoteEndPoint);
 
-                bool trueFalse = true;
-                while (trueFalse == true)
+                Database activeDB= null;
+                bool running = true;
+
+                while(running==true)
                 {
-                    byte[] buffer = new byte[100];
+                    byte[] buffer= new byte[4096];
                     int bytesRead = socket.Receive(buffer);
-                    string exit = "Exit";
-                    buffer[bytesRead] = 0;
-                    ASCIIEncoding encoding = new ASCIIEncoding();
-                    string clientMessage = encoding.GetString(buffer).Substring(0, bytesRead);
-                    //Console.WriteLine("Message received from client: " + clientMessage);
-                    if (clientMessage == exit)
+
+                    if (bytesRead <= 0)
                     {
-                        trueFalse = false;
+                        break;
+                    }
+
+                    string clientMessage = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+                    string response= "";
+
+                    if (XmlDeserializer.ParseOpen(clientMessage, out string database, out string username, out string password))
+                    {
+                        activeDB= Database.Load(database, username, password);
+
+                        if (activeDB!=null)
+                        {
+                            response= XmlSerializer.OpenCreateSuccess;
+                        }
+                        else
+                        {
+                            response= XmlSerializer.OpenCreateError("Error opening database");
+                        }
+                    }
+                    else if (XmlDeserializer.ParseCreate(clientMessage, out database, out username, out password))
+                    {
+                        try
+                        {
+                            activeDB = new Database(username, password);
+                            if (activeDB.Save(database))
+                             {
+                                response = XmlSerializer.OpenCreateSuccess;
+                             }
+                             else
+                              {
+                                response = XmlSerializer.CreateError("Error saving database");
+                              }
+                            {
+                                
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            response = XmlSerializer.OpenCreateError(e.Message);
+                        }  
+                       
+                    }
+                    else if (XmlDeserializer.ParseQuery(clientMessage, out string query))
+                    {
+                        if (activeDB != null)
+                        {
+                            string queryResult = activeDB.ExecuteMiniSQLQuery(query);
+                            response = XmlSerializer.SucessfulAnswer(queryResult);
+                        }
+                        else
+                        {
+                            response = XmlSerializer.ErrorAnswer("No database is open");
+                        }
+                    }
+                    else if (XmlDeserializer.IsCloseCommand(clientMessage))
+                    {
+                        running = false;
+                        break;
                     }
                     else
                     {
-                        string clientResult = serverDatabase.ExecuteMiniSQLQuery(clientMessage);
-                        socket.Send(encoding.GetBytes(clientResult));
+                        response = XmlSerializer.ErrorAnswer("Error: Unrecognized command");
+                        
+                    }
+                    
+
+                    if (!string.IsNullOrEmpty(response))
+                    {
+                       byte[] responseBytes = Encoding.UTF8.GetBytes(response);
+                       socket.Send(responseBytes);
+                        
                     }
                 }
+
 
                 Task.Delay(2000).Wait();
 
@@ -69,9 +134,9 @@ namespace DbManager.Network
             catch (Exception e)
             {
             //Console.WriteLine("Unhandled error: " + e);
-;
+
             }
-            
+
 
         }  
     }
