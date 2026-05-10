@@ -244,6 +244,51 @@ namespace OurTests.NetworkTests
             Assert.False(result5);
         }
 
+        [Fact]
+        public void ParseQuery()
+        {
+            string queryXml = "<Query>SELECT * FROM Table</Query>";
+
+            bool result = XmlDeserializer.ParseQuery(queryXml, out string query);
+
+            Assert.True(result);
+            Assert.Equal("SELECT * FROM Table", query);
+        }
+
+        [Fact]
+        public void ParseQueryNull()
+        {
+            string query;
+
+            bool result = XmlDeserializer.ParseQuery(null, out query);
+
+            Assert.False(result);
+            Assert.Null(query);
+        }
+
+        [Fact]
+        public void ParseQueryEmpty()
+        {
+            string query;
+
+            bool result = XmlDeserializer.ParseQuery("", out query);
+
+            Assert.False(result);
+            Assert.Null(query);
+        }
+
+        [Fact]
+        public void ParseQueryEmptyContent()
+        {
+
+            string queryXml = "<Query></Query>";
+
+            bool result = XmlDeserializer.ParseQuery(queryXml, out string query);
+
+            Assert.False(result);
+            Assert.Null(query);
+        }
+
 
     }
 }
