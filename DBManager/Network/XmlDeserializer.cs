@@ -80,7 +80,7 @@ namespace DbManager.Network
 
 
             const string createPattern = @"^<Create\sDatabase=""([^""]+)""\sUser=""([^""]+)""\sPassword=""([^""]+)""/>$";
-            Match match = Regex.Match(command, createPattern);
+            Match match = Regex.Match(command.Trim(), createPattern);
 
             if (!match.Success)
                 return false;
@@ -107,8 +107,8 @@ namespace DbManager.Network
             if (!answer.StartsWith("<Query>") || !answer.EndsWith("</Query>"))
                 return false;
 
-            const string queryPattern = @"^<Query>(.+)</Query>$";
-            Match match = Regex.Match(answer, queryPattern);
+            const string queryPattern = @"^<Query>(.+)</Query>\s*$";
+            Match match = Regex.Match(answer.Trim(), queryPattern);
 
             if (!match.Success)
                 return false;

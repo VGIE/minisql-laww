@@ -26,10 +26,6 @@ namespace DbManager.Network
 
             try
             {
-                if (m_tcpClient!=null)
-                {
-                    m_tcpClient.Close(); 
-                }
                 TcpClient newClient = new TcpClient();
                 m_tcpClient.Connect(ipAddress, port);
                 return true;
@@ -84,9 +80,9 @@ namespace DbManager.Network
             string request= XmlSerializer.OpenDatabase(database, username, password);
             string response = SendString(request);
 
-            bool Error= XmlDeserializer.ParseOpenCreateAnswer(response, out error);
+            bool isSuccess= XmlDeserializer.ParseOpenCreateAnswer(response, out error);
            
-            return Error;
+            return isSuccess;
             
         }
 

@@ -12,7 +12,7 @@ using System.Xml;
 namespace DbManager.Network
 {
     public class Server
-    {      
+    {
         public void Listen(int port)
         {
             //DEADLINE 6: Implement the server as specified (eGela)
@@ -21,123 +21,121 @@ namespace DbManager.Network
 
             try
             {
-                //Crear server
-
-                // llamar a listen (puerto) en server
-
-
-                DbManager.Database serverDatabase = new Database("admin", "adminPassword");
-                //Listen on port 1200. Accept connections from any IP address
-
                 TcpListener server = new TcpListener(IPAddress.Parse("0.0.0.0"), port);
-
                 server.Start();
-
-                //Console.WriteLine("Server running and listening on port 1200");
 
                 Socket socket = server.AcceptSocket();
 
-                //Console.WriteLine("Connection accepted from " + socket.RemoteEndPoint);
-
-                Database activeDB= null;
+                Database activeDB = null;
                 bool running = true;
 
-                while(running==true)
+                while (running)
                 {
-                    byte[] buffer= new byte[4096];
+                    byte[] buffer = new byte[4096];
                     int bytesRead = socket.Receive(buffer);
 
-                    if (bytesRead <= 0)
+                    if (bytesRead <= 0) break;
+
+                    string clientMessage = Encoding.UTF8.GetString(buffer, 0, bytesRead).Trim();
+                    string response = "";
+
+                    if (clientMessage.StartsWith("<Open"))
                     {
-                        break;
-                    }
-
-                    string clientMessage = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-
-                    string response= "";
-
-                    if (XmlDeserializer.ParseOpen(clientMessage, out string database, out string username, out string password))
-                    {
-                        activeDB= Database.Load(database, username, password);
-
-                        if (activeDB!=null)
+                        if (XmlDeserializer.ParseOpen(clientMessage, out string database, out string username, out string password))
                         {
-                            response= XmlSerializer.OpenCreateSuccess;
+                            activeDB = Database.Load(database, username, password);
+                            if (activeDB != null)
+                            {
+                                response = XmlSerializer.OpenCreateSuccess;
+                            }
                         }
                         else
                         {
-                            response= XmlSerializer.OpenCreateError("Error opening database");
+                            response = XmlSerializer.OpenCreateError(Constants.IncorrectLogin);
                         }
                     }
-                    else if (XmlDeserializer.ParseCreate(clientMessage, out database, out username, out password))
+
+                    else if (clientMessage.StartsWith("<Create"))
                     {
                         try
                         {
-                            activeDB = new Database(username, password);
-                            if (activeDB.Save(database))
-                             {
-                                response = XmlSerializer.OpenCreateSuccess;
-                             }
-                             else
-                              {
-                                response = XmlSerializer.CreateError("Error saving database");
-                              }
+                            if (XmlDeserializer.ParseCreate(clientMessage, out string database, out string username, out string password))
                             {
-                                
+                                activeDB = new Database(username, password);
+                                if (activeDB.Save(database))
+                                {
+                                    response = XmlSerializer.OpenCreateSuccess;
+                                }
+                                else
+                                {
+                                    response = XmlSerializer.CreateError(Constants.CouldNotCreateDatabase);
+                                }
+                            }
+                            else
+                            {
+                                response = XmlSerializer.CreateError(Constants.CouldNotCreateDatabase);
                             }
                         }
                         catch (Exception e)
                         {
-                            response = XmlSerializer.OpenCreateError(e.Message);
-                        }  
-                       
+                            response = XmlSerializer.CreateError(e.Message);
+                        }
                     }
-                    else if (XmlDeserializer.ParseQuery(clientMessage, out string query))
+
+                    else if (clientMessage.StartsWith("<Query"))
                     {
-                        if (activeDB != null)
+                        if (XmlDeserializer.ParseQuery(clientMessage, out string query))
                         {
-                            string queryResult = activeDB.ExecuteMiniSQLQuery(query);
-                            response = XmlSerializer.SucessfulAnswer(queryResult);
+                            if (activeDB != null)
+                            {
+                                try
+                                {
+                                    string queryResult = activeDB.ExecuteMiniSQLQuery(query);
+                                    response = XmlSerializer.SucessfulAnswer(queryResult);
+                                }
+                                catch (Exception e)
+                                {
+                                    response = XmlSerializer.ErrorAnswer(e.Message);
+                                }
+
+                            }
+
+                            else
+                            {
+                                response = XmlSerializer.ErrorAnswer(Constants.NoDatabaseOpen);
+                            }
                         }
                         else
                         {
-                            response = XmlSerializer.ErrorAnswer("No database is open");
+                            response = XmlSerializer.ErrorAnswer(Constants.NoDatabaseOpen);
                         }
                     }
+
                     else if (XmlDeserializer.IsCloseCommand(clientMessage))
                     {
                         running = false;
                         break;
                     }
+
                     else
                     {
                         response = XmlSerializer.ErrorAnswer("Error: Unrecognized command");
-                        
                     }
-                    
 
                     if (!string.IsNullOrEmpty(response))
                     {
-                       byte[] responseBytes = Encoding.UTF8.GetBytes(response);
-                       socket.Send(responseBytes);
-                        
+                        byte[] responseBytes = Encoding.UTF8.GetBytes(response);
+                        socket.Send(responseBytes);
                     }
                 }
 
-
                 Task.Delay(2000).Wait();
-
                 socket.Close();
                 server.Stop();
-
             }
             catch (Exception e)
             {
-            //Console.WriteLine("Unhandled error: " + e);
-
             }
-
-
-        }  
+        }
     }
 }
