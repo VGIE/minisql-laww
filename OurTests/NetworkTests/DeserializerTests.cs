@@ -289,6 +289,45 @@ namespace OurTests.NetworkTests
             Assert.Null(query);
         }
 
+        [Fact]
+        public void ParseQueryInvalidInputs()
+        {
+            string query;
 
+            // etiqueta incorrecta
+            string query1 = "<QueryX>SELECT a FROM People</QueryX>";
+            bool result1 = XmlDeserializer.ParseQuery(query1, out query);
+
+            Assert.False(result1);
+
+            // cierre incorrecto
+            string query2 = "<Query>SELECT a FROM People</QueryX>";
+            bool result2 = XmlDeserializer.ParseQuery(query2, out query);
+
+            Assert.False(result2);
+
+            // espacios
+            string query3 = "<Query>SELECT a FROM People</Query >";
+            bool result3 = XmlDeserializer.ParseQuery(query3, out query);
+
+            Assert.False(result3);
+
+            string query4 = "<Query >SELECT a FROM People</Query>";
+            bool result4 = XmlDeserializer.ParseQuery(query4, out query);
+
+            Assert.False(result4);
+
+            // sin cierre
+            string query5 = "<Query>SELECT a FROM People";
+            bool result5 = XmlDeserializer.ParseQuery(query5, out query);
+
+            Assert.False(result5);
+
+            // sin apertura
+            string query6 = "SELECT a FROM People</Query>";
+            bool result6 = XmlDeserializer.ParseQuery(query6, out query);
+
+            Assert.False(result6);
+        }
     }
 }

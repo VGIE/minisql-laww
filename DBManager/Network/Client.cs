@@ -26,15 +26,15 @@ namespace DbManager.Network
 
             try
             {
-                TcpClient newClient = new TcpClient();
                 m_tcpClient.Connect(ipAddress, port);
                 return true;
-                
-            }catch
+
+            }
+            catch
             {
-                
+
                 return false;
-            
+
             }
         }
 
@@ -45,31 +45,31 @@ namespace DbManager.Network
             //This private method should be used from Open/SendQuery/Close
             //Have a look at the project ClientConsole to see how we can use the TcpClient class
 
-            string messageToSend= message;
-                try
-                {
-                    NetworkStream stream = m_tcpClient.GetStream();
-                    //Pasamos el mensaje string a bytes para mandar (con UTF8 se transforma)
-                    byte[] dataToSend = Encoding.UTF8.GetBytes(messageToSend);
-                    //Mandamos al servidor el mensaje en bytes donde 0 es offset
-                    stream.Write(dataToSend, 0, dataToSend.Length);
-    
-                    //EL buffer lee la respuesta del servido. EL tamaño es 4096 pero se pyede cambiar dependiendo de la respuesta esperada 
-                    byte[] buffer = new byte[4096];
-                    int bytesRead = stream.Read(buffer, 0, buffer.Length);
+            string messageToSend = message;
+            try
+            {
+                NetworkStream stream = m_tcpClient.GetStream();
+                //Pasamos el mensaje string a bytes para mandar (con UTF8 se transforma)
+                byte[] dataToSend = Encoding.UTF8.GetBytes(messageToSend);
+                //Mandamos al servidor el mensaje en bytes donde 0 es offset
+                stream.Write(dataToSend, 0, dataToSend.Length);
 
-                    if(bytesRead==0)
-                    {
-                        return null;
-                    }   
-                    //De vuelta a string la respuesta dle servidor
-                    string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                    return response;
-                }
-                catch
+                //EL buffer lee la respuesta del servido. EL tamaño es 4096 pero se pyede cambiar dependiendo de la respuesta esperada 
+                byte[] buffer = new byte[4096];
+                int bytesRead = stream.Read(buffer, 0, buffer.Length);
+
+                if (bytesRead == 0)
                 {
                     return null;
-                }            
+                }
+                //De vuelta a string la respuesta dle servidor
+                string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                return response;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public bool Open(string database, string username, string password, out string error)
@@ -77,54 +77,54 @@ namespace DbManager.Network
             //DEADLINE 6: Send an Open command to the server using SendString
 
             error = null;
-            string request= XmlSerializer.OpenDatabase(database, username, password);
+            string request = XmlSerializer.OpenDatabase(database, username, password);
             string response = SendString(request);
 
-            bool isSuccess= XmlDeserializer.ParseOpenCreateAnswer(response, out error);
-           
+            bool isSuccess = XmlDeserializer.ParseOpenCreateAnswer(response, out error);
+
             return isSuccess;
-            
+
         }
 
         public bool Create(string database, string username, string password, out string error)
         {
             //DEADLINE 6: Send a Create command to the server using SendString
-            
+
             error = null;
-            string request= XmlSerializer.CreateDatabase(database, username, password);
+            string request = XmlSerializer.CreateDatabase(database, username, password);
             string response = SendString(request);
-           
-            bool Error= XmlDeserializer.ParseOpenCreateAnswer(response, out error);
+
+            bool Error = XmlDeserializer.ParseOpenCreateAnswer(response, out error);
 
             return Error;
-            
+
         }
 
         public string SendQuery(string query)
         {
-         
-            //DEADLINE 6: Send a Query command to the server using SendString
-            string queryRequest=XmlSerializer.Query(query);
-            string response = SendString(queryRequest);
-            
 
-            if(XmlDeserializer.ParseQueryAnswer(response, out string answerContent))
-             {
+            //DEADLINE 6: Send a Query command to the server using SendString
+            string queryRequest = XmlSerializer.Query(query);
+            string response = SendString(queryRequest);
+
+
+            if (XmlDeserializer.ParseQueryAnswer(response, out string answerContent))
+            {
                 return answerContent;
-             }
-             else 
-              {
-                return "ERROR: " + answerContent;
-              }
-           
+            }
+            else
+            {
+                return answerContent;
+            }
+
         }
 
         public void Close()
         {
             //DEADLINE 6: Send a Close command to the server using SendString and close the connection to the server
             SendString(XmlSerializer.CloseConnection);
-            m_tcpClient.Close(); 
-            
+            m_tcpClient.Close();
+
         }
     }
 }

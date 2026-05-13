@@ -44,9 +44,14 @@ namespace DbManager.Network
                         if (XmlDeserializer.ParseOpen(clientMessage, out string database, out string username, out string password))
                         {
                             activeDB = Database.Load(database, username, password);
+
                             if (activeDB != null)
                             {
                                 response = XmlSerializer.OpenCreateSuccess;
+                            }
+                            else
+                            {
+                                response = XmlSerializer.OpenCreateError(Constants.IncorrectLogin);
                             }
                         }
                         else
@@ -88,18 +93,17 @@ namespace DbManager.Network
                         {
                             if (activeDB != null)
                             {
-                                try
+                                string queryResult = activeDB.ExecuteMiniSQLQuery(query);
+
+                                if (queryResult.StartsWith("ERROR"))
                                 {
-                                    string queryResult = activeDB.ExecuteMiniSQLQuery(query);
+                                    response = XmlSerializer.ErrorAnswer(queryResult);
+                                }
+                                else
+                                {
                                     response = XmlSerializer.SucessfulAnswer(queryResult);
                                 }
-                                catch (Exception e)
-                                {
-                                    response = XmlSerializer.ErrorAnswer(e.Message);
-                                }
-
                             }
-
                             else
                             {
                                 response = XmlSerializer.ErrorAnswer(Constants.NoDatabaseOpen);
@@ -107,7 +111,7 @@ namespace DbManager.Network
                         }
                         else
                         {
-                            response = XmlSerializer.ErrorAnswer(Constants.NoDatabaseOpen);
+                            response = XmlSerializer.ErrorAnswer(Constants.SyntaxError);
                         }
                     }
 
@@ -129,7 +133,6 @@ namespace DbManager.Network
                     }
                 }
 
-                Task.Delay(2000).Wait();
                 socket.Close();
                 server.Stop();
             }
