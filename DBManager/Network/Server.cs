@@ -41,7 +41,12 @@ namespace DbManager.Network
 
                     if (clientMessage.StartsWith("<Open"))
                     {
-                        if (XmlDeserializer.ParseOpen(clientMessage, out string database, out string username, out string password))
+
+                        if (!XmlDeserializer.ParseOpen(clientMessage, out string database, out string username, out string password))
+                        {
+                            response = XmlSerializer.OpenCreateError(Constants.SyntaxError);
+                        }
+                        else
                         {
                             activeDB = Database.Load(database, username, password);
 
@@ -53,10 +58,6 @@ namespace DbManager.Network
                             {
                                 response = XmlSerializer.OpenCreateError(Constants.IncorrectLogin);
                             }
-                        }
-                        else
-                        {
-                            response = XmlSerializer.OpenCreateError(Constants.IncorrectLogin);
                         }
                     }
 
@@ -95,7 +96,7 @@ namespace DbManager.Network
                             {
                                 string queryResult = activeDB.ExecuteMiniSQLQuery(query);
 
-                                if (queryResult.StartsWith("ERROR"))
+                                if (queryResult != null && queryResult.StartsWith("ERROR"))
                                 {
                                     response = XmlSerializer.ErrorAnswer(queryResult);
                                 }
